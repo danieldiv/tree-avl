@@ -7,30 +7,16 @@ Tree* createTree() {
 void rotacaoSimplesDireita(Tree **t) {
 	Tree *aux;
 
-	printf("\nRSD\n");
-	printf("t: %d\n", (*t)->reg.key);
-	printf("t->esq: %d\n", (*t)->esq->reg.key);
-
-	printf("1\n");
 	aux = (*t)->esq;
-	printf("2\n");
 	(*t)->esq = aux->dir;
-	printf("3\n");
 	aux->dir = (*t);
-	printf("4\n");
 	(*t)->peso = getMaxPeso( getPeso( &(*t)->esq ), getPeso( &(*t)->dir ) ) + 1;
-	printf("5\n");
 	aux->peso = getMaxPeso( getPeso( &(*t)->esq ), (*t)->peso ) + 1;
-	printf("6\n");
 	(*t) = aux;
 }
 
 void rotacaoSimplesEsquerda(Tree **t) {
 	Tree *aux;
-
-	printf("\nRSE\n");
-	printf("t: %d\n", (*t)->reg.key);
-	printf("t->dir: %d\n", (*t)->dir->reg.key);
 
 	aux = (*t)->dir;
 	(*t)->dir = aux->esq;
@@ -61,59 +47,27 @@ void insertItem(Tree **t, Record r) {
 		
 
 		if(r.key < (*t)->reg.key) {
-			printf("\ninsersao: %d\n", r.key);
-			printf("lado esquerdo\n");
-			printf("valor atual: %d", (*t)->reg.key);
-			printf(" | peso: %d\n", (*t)->peso);
-
 			insertItem(&(*t)->esq, r);
 
-			printf("\n(%d:%d:%d) inserido E\n", r.key, (*t)->reg.key, (*t)->esq->reg.key);
-			printf("esq: %d\n", getPeso( &(*t)->esq));
-			printf("dir: %d\n", getPeso( &(*t)->dir));
-
 			if(getPeso( &(*t)->esq) - getPeso(&(*t)->dir) == 2) {
-				printf("rot D a\n");
-
-				if(r.key < (*t)->esq->reg.key) {
-					printf("rot S D b\n");
+				if(r.key < (*t)->esq->reg.key)
 					rotacaoSimplesDireita(t);
-				} else {
-					printf("rot D D");
+				else 
 					rotacaoDuplaDireita(t);
-				}
-					
 			}
 		}
-			
 
 		if(r.key > (*t)->reg.key) {
-			printf("\ninsersao: %d\n", r.key);
-			printf("lado direito\n");
-			printf("valor atual: %d", (*t)->reg.key);
-			printf(" | peso: %d\n", (*t)->peso);
-
 			insertItem(&(*t)->dir, r);
 
-			printf("\n(%d:%d:%d) inserido D\n", r.key, (*t)->reg.key, (*t)->dir->reg.key);
-			printf("esq: %d\n", getPeso( &(*t)->esq));
-			printf("dir: %d\n", getPeso( &(*t)->dir));
-
 			if(getPeso( &(*t)->dir) - getPeso(&(*t)->esq) == 2) {
-				printf("rot E a\n");
-				if(r.key > (*t)->dir->reg.key) {
-					printf("rot S E b\n");
+				if(r.key > (*t)->dir->reg.key)
 					rotacaoSimplesEsquerda(t);
-				} else {
-					printf("rot D E");
+				else
 					rotacaoDuplaEsquerda(t);
-				}
-					
 			}
 		}
-			
 	}
-
 	(*t)->peso = getMaxPeso( getPeso( &(*t)->esq ), getPeso( &(*t)->dir ) ) + 1;
 
 }
@@ -132,7 +86,7 @@ int getMaxPeso(int left, int right) {
 
 void pesquisa(Tree **t, Tree **aux, Record r) {
 	if(*t == NULL) {
-		printf("[ERRO]: Node not found!\n");
+		printf("[ERRO]: Node (%d) not found!\n", r.key);
 		return;
 	}
 
@@ -140,6 +94,37 @@ void pesquisa(Tree **t, Tree **aux, Record r) {
 	if((*t)->reg.key < r.key) { pesquisa(&(*t)->dir, aux, r); return; }
 
 	*aux = *t;
+}
+
+void rebalanceTree(Tree **t) {
+
+	if((*t) != NULL) {
+		int balance;
+		int left = 0;
+		int right = 0;
+
+		balance = getPeso(&(*t)->esq) - getPeso(&(*t)->dir);
+		
+		if((*t)->esq)
+			left = getPeso(&(*t)->esq->esq) - getPeso(&(*t)->esq->dir);
+		if((*t)->dir)
+			right = getPeso(&(*t)->dir->esq) - getPeso(&(*t)->dir->dir);
+
+		// printf("\n============Valores balanceamento=========\n");
+		// printf("Raiz: %d, Filho esq: %d, Filho dir: %d\n", balance, left, right);
+		// printf("==========================================");
+
+		if(balance == 2 && left >= 0)
+			rotacaoSimplesDireita(t);
+			
+		if(balance == 2 && left < 0)
+			rotacaoDuplaDireita(t);
+
+		if(balance == -2 && right >= 0)
+			rotacaoDuplaEsquerda(t);
+		if(balance == -2 && right < 0)
+			rotacaoSimplesEsquerda(t);
+	}
 }
 
 void antecessor(Tree **t, Tree *aux) {
@@ -154,46 +139,11 @@ void antecessor(Tree **t, Tree *aux) {
 	free(aux);
 }
 
-void rebalanceTree(Tree **t) {
-
-	if((*t) != NULL) {
-		printf("O valor e %d\n", (*t)->reg.key);
-
-		int balance;
-		int left = 0;
-		int right = 0;
-
-		balance = getPeso(&(*t)->esq) - getPeso(&(*t)->dir);
-		
-		if((*t)->esq)
-			left = getPeso(&(*t)->esq->esq) - getPeso(&(*t)->esq->dir);
-		if((*t)->dir)
-			right = getPeso(&(*t)->dir->esq) - getPeso(&(*t)->dir->dir);
-
-		printf("\n============Valores balanceamento=========\n");
-		printf("Raiz: %d, Filho esq: %d, Filho dir: %d\n", balance, left, right);
-		printf("==========================================");
-
-		if(balance == 2 && left >= 0) {
-			printf("\n\nkey: %d\n", (*t)->reg.key);
-			rotacaoSimplesDireita(t);
-		}
-			
-		if(balance == 2 && left < 0)
-			rotacaoDuplaDireita(t);
-
-		if(balance == -2 && right >= 0)
-			rotacaoDuplaEsquerda(t);
-		if(balance == -2 && right < 0)
-			rotacaoSimplesEsquerda(t);
-	}
-}
-
 void removeItem(Tree **t, Tree **f, Record r) {
 	Tree *aux;
 
 	if(*t == NULL) {
-		printf("[ERROR]: Record not found!!!\n");
+		printf("[ERROR]: Record (%d) not found!!!\n", r.key);
 		return;
 	}
 
@@ -205,33 +155,16 @@ void removeItem(Tree **t, Tree **f, Record r) {
 		*t = (*t)->esq;
 		free(aux);
 
-		// if((*f) != NULL)
-			printf("valor de f: %d\n", (*f)->reg.key);
-			printf("valor de f esq: %d\n", (*f)->esq->reg.key);
-			printf("valor de f dir: %d\n", (*f)->dir->reg.key);
-			rebalanceTree(f);
-		// else
-		// 	printf("ponteiro f eh nulo\n");
-
-		// if((*t) != NULL)
-			rebalanceTree(t);
-		// else
-		// 	printf("ponteiro t eh nulo\n");
+		rebalanceTree(f);
+		rebalanceTree(t);
 		return;
 	}
 
 	if((*t)->esq != NULL) {
 		antecessor(&(*t)->esq, *t);
 		
-		// if((*f) != NULL)
-			rebalanceTree(f);
-		// else
-		// 	printf("ponteiro f eh nulo\n");
-
-		// if((*t) != NULL)
-			rebalanceTree(t);
-		// else
-		// 	printf("ponteiro t eh nulo\n");
+		rebalanceTree(f);
+		rebalanceTree(t);
 		return;
 	}
 
@@ -239,15 +172,8 @@ void removeItem(Tree **t, Tree **f, Record r) {
 	*t = (*t)->dir;
 	free(aux);
 	
-	// if((*f) != NULL)
-		rebalanceTree(f);
-	// else
-	// 	printf("ponteiro f eh nulo\n");
-
-	// if((*t) != NULL)
-		rebalanceTree(t);
-	// else
-	// 	printf("ponteiro t eh nulo\n");
+	rebalanceTree(f);
+	rebalanceTree(t);
 }
 
 void preordem(Tree *t) {
@@ -261,7 +187,7 @@ void preordem(Tree *t) {
 void central(Tree *t) {
 	if(!(t == NULL)) {
 		central(t->esq);
-		printf("%d:%d ", t->reg.key, t->peso);
+		printf("%d ", t->reg.key);
 		central(t->dir);
 	}
 }
