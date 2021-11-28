@@ -14,4 +14,4 @@ Daniel Alves Sanches - 4º Periodo - AEDS II
 
 > make run
 
-![Scrennshot](menu-principal.png)
+![Scrennshot](img/menu-principal.png)
