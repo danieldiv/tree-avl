@@ -83,8 +83,7 @@ void pesquisar(Tree **raiz) {
 		pesquisa(raiz, &aux, r);
 
 		if(aux != NULL){
-			printf("\nELEMENTOS ABAIXO DE (%d) EM\n", r.key);
-			printf("PRE ORDEN: { ");
+			printf("\nPRE ORDEN: { ");
 			preordem(aux);
 			printf("}\n");
 		}
