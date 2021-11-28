@@ -98,33 +98,31 @@ void pesquisa(Tree **t, Tree **aux, Record r) {
 
 void rebalanceTree(Tree **t) {
 
-	if((*t) != NULL) {
-		int balance;
-		int left = 0;
-		int right = 0;
+	int balance;
+	int left = 0;
+	int right = 0;
 
-		balance = getPeso(&(*t)->esq) - getPeso(&(*t)->dir);
+	balance = getPeso(&(*t)->esq) - getPeso(&(*t)->dir);
+	
+	if((*t)->esq)
+		left = getPeso(&(*t)->esq->esq) - getPeso(&(*t)->esq->dir);
+	if((*t)->dir)
+		right = getPeso(&(*t)->dir->esq) - getPeso(&(*t)->dir->dir);
+
+	// printf("\n============Valores balanceamento=========\n");
+	// printf("Raiz: %d, Filho esq: %d, Filho dir: %d\n", balance, left, right);
+	// printf("==========================================");
+
+	if(balance == 2 && left >= 0)
+		rotacaoSimplesDireita(t);
 		
-		if((*t)->esq)
-			left = getPeso(&(*t)->esq->esq) - getPeso(&(*t)->esq->dir);
-		if((*t)->dir)
-			right = getPeso(&(*t)->dir->esq) - getPeso(&(*t)->dir->dir);
+	if(balance == 2 && left < 0)
+		rotacaoDuplaDireita(t);
 
-		// printf("\n============Valores balanceamento=========\n");
-		// printf("Raiz: %d, Filho esq: %d, Filho dir: %d\n", balance, left, right);
-		// printf("==========================================");
-
-		if(balance == 2 && left >= 0)
-			rotacaoSimplesDireita(t);
-			
-		if(balance == 2 && left < 0)
-			rotacaoDuplaDireita(t);
-
-		if(balance == -2 && right >= 0)
-			rotacaoDuplaEsquerda(t);
-		if(balance == -2 && right < 0)
-			rotacaoSimplesEsquerda(t);
-	}
+	if(balance == -2 && right >= 0)
+		rotacaoDuplaEsquerda(t);
+	if(balance == -2 && right < 0)
+		rotacaoSimplesEsquerda(t);
 }
 
 void antecessor(Tree **t, Tree *aux) {
@@ -156,7 +154,6 @@ void removeItem(Tree **t, Tree **f, Record r) {
 		free(aux);
 
 		rebalanceTree(f);
-		rebalanceTree(t);
 		return;
 	}
 

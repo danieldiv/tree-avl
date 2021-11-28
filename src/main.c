@@ -99,7 +99,7 @@ void imprimir(Tree *raiz) {
 		printf("\nPRE ORDEN: { ");
 		preordem(raiz);
 		
-		printf("}\nCENTRAL: { ");
+		printf("}\nCENTRAL:   { ");
 		central(raiz);
 		
 		printf("}\nPOS ORDEN: { ");
