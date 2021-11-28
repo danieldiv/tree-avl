@@ -18,7 +18,7 @@ Daniel Alves Sanches - 4º Periodo - AEDS II
 
 ![Scrennshot](img/menu-principal.png)
 
-- O menu é composto de 5 opçoes
+- O menu é composto de 5 opções
 
     - A opção 1 irá inicializar a arvore com elementos predefinidos
 
